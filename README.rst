@@ -25,12 +25,12 @@ So sollten die Dinge nicht laufen. Nicht in Python.
     >>> r.text
     ...
 
-Sehen sie sich `den gleichen Code, aber ohne Requests <https://gist.github.com/973705>` an.
+Sehen sie sich den gleichen Code, `aber ohne Requests <https://gist.github.com/973705>`_ an.
 
 Requests erlaubt Ihnen das Versenden von HTTP/1.1-Anfragen. Sie können Header, Formulardaten,
 mehrteilige Dateien und Parameter über einfache Python-Dictionaries hinzufügen. Auf die gleiche
 Art und Weise greifen Sie auch auf die Daten der Antwort zu. Unter der Haube steckt die httplib
-und `urllib3<https://github.com/shazow/urllib3>` , aber Requests übernimmt all die harte Arbeit
+und `urllib3 <https://github.com/shazow/urllib3>`_ , aber Requests übernimmt all die harte Arbeit
 und die verrückten Hacks für Sie.
 
 

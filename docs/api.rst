@@ -129,7 +129,7 @@ ist dazu gedacht, den Schmerz eines Upgrades möglichst gering zu halten.
       r = requests.get('https://github.com/timeline.json')
       r.json()   # Dieser *Aufruf* wirft eine Exception, sollte die JSON-Dekodierung fehlschlagen
 
-* Die ``Session``API hat sich geändert. Session-Objekte erhalten keine Parameter mehr.
+* Die ``Session`` API hat sich geändert. Session-Objekte erhalten keine Parameter mehr.
   ``Session``wird jetzt auch mit großem Anfagnsbuchstaben geschrieben, aber das Objekt
   kann aus Kompatibilitätsgründen weiterhin klein geschrieben als ``session`` instantiiert werden.
   ::

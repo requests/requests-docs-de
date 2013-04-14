@@ -8,7 +8,8 @@ aber etwas eigenwilligen Entwickler.
 Wohlwollender Diktator
 ~~~~~~~~~~~~~~~~~~~~~~
 
-`Kenneth Reitz <http://kennethreitz.org>`_ ist der WDAL. Er hat das letzte Wort hinsichtlich jedes Aspekts von Requests.
+`Kenneth Reitz <http://kennethreitz.org>`_ ist der `BDFL <http://de.wikipedia.org/wiki/Benevolent_Dictator_for_Life>`_. 
+Er hat das letzte Wort hinsichtlich jedes Aspekts von Requests.
 
 
 Werte
@@ -32,8 +33,7 @@ kleinen Satz an praxisorientierten Regeln ein Ende zu bereiten.
 Standardbibliothek?
 ~~~~~~~~~~~~~~~~~~~
 
-Es gibt keinen *aktiven* Plan, dass Requests Teil der Standardbilbiothek wird. Diese Entscheidung wurde intensiv mit Guido und
-vielen anderen Kernentwicklern besprochen.
+Es gibt keinen *aktiven* Plan, dass Requests Teil der Standardbilbiothek wird. Diese Entscheidung wurde intensiv mit Guido und vielen anderen Kernentwicklern besprochen.
 
 Zusammengefasst ist die Standardbibliothek der Platz, an den eine Bibliothek zum Sterben geht. Es ist für ein Modul dann 
 angebracht, in die Standardbibliothek aufgenommen zu werden, wenn eine aktive Entwicklung nicht länger nötig ist.

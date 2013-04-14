@@ -47,6 +47,8 @@ Features
 - Unicode Antwortdaten
 - Hochladen von mehrteiligen Dateien
 - Verbindungs-Timeouts
+- ``.netrc`` Unterstützung
+- Python 2.6-3.3
 - Thread-Sicherheit
 
 

@@ -99,7 +99,7 @@ Falls Sie die Zeichenkodierung ändern, benutzt Requests diese Zuordnung, sobald
 Sie auf ``r.text``zugreifen.
 
 Requests wird auch benutzerdefinierte Zeichenkodierungen benutzen, wenn Sie diese
-benötigen. Wenn Sie Ihre eigene Kodierung erstellt und im Modul ``codecs``registriert
+benötigen. Wenn Sie Ihre eigene Kodierung erstellt und im Modul ``codecs`` registriert
 haben, können Sie einfach den Namen der Kodierung als Wert für ``r.encoding`` benutzen
 und Requests übernimmt die Dekodierung für Sie.
 
@@ -107,7 +107,7 @@ und Requests übernimmt die Dekodierung für Sie.
 Binäre Antwortdaten
 -------------------
 
-Sie können auch byteweise auf die Serverantwort zugreifen, um nicht-Text Anfragen zu erldigen::
+Sie können auch byteweise auf die Serverantwort zugreifen, um nicht-Text Anfragen zu erledigen::
 
     >>> r.content
     b'[{"repository":{"open_issues":0,"url":"https://github.com/...
@@ -188,7 +188,7 @@ Dictionary mit den Daten wird automatisch formular-kodiert, wenn die Anfrage aus
     }
 
 
-In vielen Fällen werden Sie auch Daten senden wollen, die nicht formular-kodiert sein.
+In vielen Fällen werden Sie auch Daten senden wollen, die nicht formular-kodiert sind.
 Wenn Sie an Stelle eines Dictionary einen ``string`` übergeben, werden diese Daten direkt übertragen.
 
 So akzeptiert die GitHub API v3 beispielsweise JSON-kodierte Strings für POST/PATCH-Daten::
@@ -302,7 +302,7 @@ Wir können die Header der Serverantwort als Python Dictionary lesen::
     }
 
 Dieses Dictionary ist aber ein spezielles: es ist nur für HTTP-Header gemacht.
-Nach dem `RFC 2616 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html>`_, sind
+Nach dem `RFC 2616 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html>`_ sind
 HTTP Header nicht abhängig von Groß- oder Kleinschreibung.
 
 Daher können wir in beliebiger Schreibweise auf die Header zugreifen::
@@ -343,7 +343,7 @@ Um eigene Cookies an den Server zu senden, können Sie den ``cookies`` Parameter
 Redirections und Verlauf
 ------------------------
 
-Requets führt automatisch Weiterleitungen aus, wenn das GET und das OPTIONS Verb benutzt wird.
+Requets führt automatisch Weiterleitungen aus, wenn eines der beiden Verben GET oder OPTIONS benutzt wird.
 
 GitHub zum Beispiel leitet alle HTTP-Anfragen auf HTTPS um. Wir können die ``history`` Methode
 des Antwortobjekts benutzen, um diese Weiterleitungen zu verfolgen. Sehen wir und an, was GitHub macht::
@@ -409,7 +409,7 @@ Falls eine Anfrage eine Zeitüberschreitung auslöst, wird ein
 :class:`Timeout` Ausnahmefehler ausgelöst.
 
 Falls eine Anfrage die konfigurierte maximale Anzahl von Weiterleitungen überschreitet,
-wird ein :class:`TooManyRedirects` Ausnahmefhler ausgelöst.
+wird ein :class:`TooManyRedirects` Ausnahmefehler ausgelöst.
 
 Alle Ausnahmefehler, die Requests explizit auslöst, erben von 
 :class:`requests.exceptions.RequestException`.

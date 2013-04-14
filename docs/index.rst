@@ -54,7 +54,7 @@ in Ihren internen Anwendungen. Requests wurde mehr als 2 Millionen mal von PyPI 
     an Abstraktion sein kann.
 
 **Matt DeBoard**
-    I werde mit @kennethreitz's Python requests Modul auf meinen Körper tätowieren lassen.
+    I werde mir @kennethreitz's Python requests Modul auf meinen Körper tätowieren lassen.
     Das ganze Ding.
 
 **Daniel Greenfeld**

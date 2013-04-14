@@ -123,3 +123,4 @@ Patches und Vorschläge
 - Denis Ryzhkov <denisr@denisr.com>
 - Wilfred Hughes <me@wilfred.me.uk> @dontYetKnow
 - Dmitry Medvinsky <me@dmedvinsky.name>
+- Armin Hanisch <@derlinkshaender>

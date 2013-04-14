@@ -13,8 +13,8 @@ wir die wichtigsten hier an dieser Stelle und geben Links zur eigentlichen Dokum
 Haupt-Schnittstelle
 -------------------
 
-Die gesamte Funktionalität von Requests kann mit diesen 7 Methoden erreicht werden.
-Alle liefern eine Instanz der Klasse :class:`Respsonse <Response>`_.
+Die gesamte Funktionalität von Requests kann mit den folgenden sieben Methoden erreicht werden.
+Alle liefern eine Instanz der Klasse :class:`Response <Response>`_ zurück.
 
 .. autofunction:: request
 
@@ -127,56 +127,54 @@ ist dazu gedacht, den Schmerz eines Upgrades möglichst gering zu halten.
 
       import requests
       r = requests.get('https://github.com/timeline.json')
-      r.json()   # This *call* raises an exception if JSON decoding fails
+      r.json()   # Dieser *Aufruf* wirft eine Exception, sollte die JSON-Dekodierung fehlschlagen
 
-* The ``Session`` API has changed. Sessions objects no longer take parameters.
-  ``Session`` is also now capitalized, but it can still be
-  instantiated with a lowercase ``session`` for backwards compatibility.
-
+* Die ``Session``API hat sich geändert. Session-Objekte erhalten keine Parameter mehr.
+  ``Session``wird jetzt auch mit großem Anfagnsbuchstaben geschrieben, aber das Objekt
+  kann aus Kompatibilitätsgründen weiterhin klein geschrieben als ``session`` instantiiert werden.
   ::
 
-      s = requests.Session()    # formerly, session took parameters
+      s = requests.Session()    # früher konnten Parameter übergeben werden
       s.auth = auth
       s.headers.update(headers)
       r = s.get('http://httpbin.org/headers')
 
-* All request hooks have been removed except 'response'.
+* Alle Hooks für Anfragen wurden entfernt, mit Ausnahme von 'response'.
 
-* Authentication helpers have been broken out into separate modules. See
-  requests-oauthlib_ and requests-kerberos_.
+* Die Hilfsroutinen für die Authentifizierung wurden in separate Module ausgegliedert.
+  Sehen Sie sich dazu requests-oauthlib_ and requests-kerberos_ an.
 
 .. _requests-oauthlib: https://github.com/requests/requests-oauthlib
 .. _requests-kerberos: https://github.com/requests/requests-kerberos
 
-* The parameter for streaming requests was changed from ``prefetch`` to
-  ``stream`` and the logic was inverted. In addition, ``stream`` is now
-  required for raw response reading.
+* Der Parameter für Streaming-Anfragen wurde von ``prefetch`` in ``stream`` geändert
+  und die Logik invertiert. Zusätzlich muss ``stream`` jetzt angegeben werden, um die
+  Rohdaten der Serverantwort zu lesen.
 
   ::
 
-      # in 0.x, passing prefetch=False would accomplish the same thing
+      # in 0.x, wurde das gleiche Ergebnis mit der Angaben von prefetch=False erreicht
       r = requests.get('https://github.com/timeline.json', stream=True)
       r.raw.read(10)
 
-* The ``config`` parameter to the requests method has been removed. Some of
-  these options are now configured on a ``Session`` such as keep-alive and
-  maximum number of redirects. The verbosity option should be handled by
-  configuring logging.
+* Der ``config`` Parameter für Anfragen wurde entfernt. Einige der davon betroffenen
+  Optionen werden jetzt in einer ``Session`` konfiguriert, wie z.B. keep-alive und 
+  die meximale Anzahl von Redirects. Die Option für ausführliche Informationen (verbosity)
+  sollte über die Konfiguration des Loggings gesetzt werden.
 
   ::
 
-      # Verbosity should now be configured with logging
+      # Ausfürhliche Informationen sollten jetzt über das Logging konfiguriert werden
       my_config = {'verbose': sys.stderr}
-      requests.get('http://httpbin.org/headers', config=my_config)  # bad!
+      requests.get('http://httpbin.org/headers', config=my_config)  # schlecht!
 
 
-Licensing
-~~~~~~~~~
+Lizensierung
+~~~~~~~~~~~~
 
-One key difference that has nothing to do with the API is a change in the
-license from the ISC_ license to the `Apache 2.0`_ license. The Apache 2.0
-license ensures that contributions to requests are also covered by the Apache
-2.0 license.
+Ein Hauptunterschied, der nichts mit der API zu tun hat, ist eine Änderung der Lizensierung
+von der ISC_ Lizenz zur `Apache 2.0`_ Lizenz. Die Apache 2.0 Lizenz stellt sicher, dass
+Beiträge zu Requests ebenfalls von der Apache 2.0 Lizenz abgedeckt sind.
 
 .. _ISC: http://opensource.org/licenses/ISC
 .. _Apache 2.0: http://opensource.org/licenses/Apache-2.0

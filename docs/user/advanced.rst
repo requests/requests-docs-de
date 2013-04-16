@@ -120,79 +120,98 @@ prepare it immediately and modified the ``PreparedRequest`` object. You then
 send that with the other parameters you would have sent to ``requests.*`` or
 ``Sesssion.*``.
 
-SSL Cert Verification
----------------------
+Überprüfen von SSL-Zertifikaten
+-------------------------------
 
-Requests can verify SSL certificates for HTTPS requests, just like a web browser. To check a host's SSL certificate, you can use the ``verify`` argument::
+Requests kann SSL-Zertifikate für HTTPS-Anfragen überprüfen, genau wie ein Web Browser. Um 
+das SSL Zertifikat eines Hosts zu überprüfen, können Sie den ``verify`` Parameter benutzen::
 
     >>> requests.get('https://kennethreitz.com', verify=True)
     requests.exceptions.SSLError: hostname 'kennethreitz.com' doesn't match either of '*.herokuapp.com', 'herokuapp.com'
 
-I don't have SSL setup on this domain, so it fails. Excellent. Github does though::
+Ich habe SSL für diese Domain nicht aktiviert, deshalb schlägt die Überprüfung fehl. Exzellent.
+GitHub dagegen hat SSL aktiviert::
 
     >>> requests.get('https://github.com', verify=True)
     <Response [200]>
 
-You can also pass ``verify`` the path to a CA_BUNDLE file for private certs. You can also set the ``REQUESTS_CA_BUNDLE`` environment variable.
+Sie können auch anstelle von ``True`` den Pfad zu einer CA_BUNDLE Datei für private Zertifikate
+übergeben. Ebenso können Sie die ``REQUESTS_CA_BUNDLE`` Umgebungsvariable setzen.
 
-Requests can also ignore verifying the SSL certificate if you set ``verify`` to False.
+Requests kann auch die Überprüfung des SSL Zertifikates ignorieren, wenn Sie ``verify`` auf ``False`` setzen.
 
 ::
 
     >>> requests.get('https://kennethreitz.com', verify=False)
     <Response [200]>
 
-By default, ``verify`` is set to True. Option ``verify`` only applies to host certs.
+Als Standard steht ``verfiy``auf ``True`` und kann nur für Hostzertifikate verwendet werden.
 
 You can also specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both file's path::
 
     >>> requests.get('https://kennethreitz.com', cert=('/path/server.crt', '/path/key'))
     <Response [200]>
 
-If you specify a wrong path or an invalid cert::
+Falls Sie einen ungültigen Pfad oder ein ungültiges Zertifikat angeben::
 
     >>> requests.get('https://kennethreitz.com', cert='/wrong_path/server.pem')
     SSLError: [Errno 336265225] _ssl.c:347: error:140B0009:SSL routines:SSL_CTX_use_PrivateKey_file:PEM lib
 
 
-Body Content Workflow
----------------------
+Workflow für Antwortdaten
+-------------------------
 
-By default, when you make a request, the body of the response is downloaded immediately. You can override this behavior and defer downloading the response body until you access the :class:`Response.content` attribute with the ``stream`` parameter::
+Standardmäßig wird, wenn Sie eine Anfrage ausführen, der Inhalt (body) der Antwort sofort herunter
+geladen. Sie können dieses Verhalten überschreiben und das Herunterladen der Antwort verzögern,
+bis Sie auf die :class:`Response.content` Eigenschaft zugreifen. Benutzen Sie dazu den
+``stream`` Parameter::
 
     tarball_url = 'https://github.com/kennethreitz/requests/tarball/master'
     r = requests.get(tarball_url, stream=True)
 
-At this point only the response headers have been downloaded and the connection remains open, hence allowing us to make content retrieval conditional::
+Zu diesem Zeitpunkt wurden nur die Header der Antwort herunter geladen und die Verbindung
+bleibt offen. Damit wird und erlaubt, das Lesen des Antwortsinhalts optional zu gestalten::
 
     if int(r.headers['content-length']) < TOO_LONG:
       content = r.content
       ...
 
-You can further control the workflow by use of the :class:`Response.iter_content` and :class:`Response.iter_lines` methods, or reading from the underlying urllib3 :class:`urllib3.HTTPResponse` at :class:`Response.raw`.
+Sie können den Ablauf durch die Methoden :class:`Response.iter_content` und :class:`Response.iter_lines` 
+weiter kontrollieren oder indem Sie von der darunter liegenden urllib3-Klasse :class:`urllib3.HTTPResponse` 
+die Eigenschaft :class:`Response.raw` lesen.
 
 
 Keep-Alive
 ----------
 
-Excellent news — thanks to urllib3, keep-alive is 100% automatic within a session! Any requests that you make within a session will automatically reuse the appropriate connection!
+Gute Nachrichten - dank der urllib3 funktioniert keep-alive 100% automatisch innerhalb einer Session.
+Jede Anfrage, die Sie innerhalb einer Session ausführen, wird automatisch die jeweilige Verbindung wieder verwenden!
 
-Note that connections are only released back to the pool for reuse once all body data has been read; be sure to either set ``stream`` to ``False`` or read the ``content`` property of the ``Response`` object.
+
+Bitte beachten Sie, dass Verbindungen nur dann an den Pool zurück gegeben werden, 
+nachdem alle Daten der Antwort gelesen wurden. Stellen Sie sicher, dass entweder 
+``stream`` auf ``False`` gesetzt wurde oder Sie die ``content`` Eigenschaft des
+``Response`` Objekts gelesen haben.
+
 
 
 Streaming Uploads
 -----------------
 
-Requests supports streaming uploads, which allow you to send large streams or files without reading them into memory. To stream and upload, simply provide a file-like object for your body::
+Requests unterstützt Streaming bei Uploads, damit Sie in der Lage sind, große Streams oder Dateien 
+zu senden, ohne diese erst in den Speicher laden zu müssen. Um den Upload zu streamen, geben Sie
+für die Nutzdaten einfach ein Dateiobjekt an::
 
-    with open('massive-body') as f:
+    with open('riesen-body') as f:
         requests.post('http://some.url/streamed', data=f)
 
 
-Chunk-Encoded Requests
-----------------------
+Paketierte Anforderungen (*chunked encoding*)
+---------------------------------------------
 
-Requests also supports Chunked transfer encoding for outgoing and incoming requests. To send a chunk-encoded request, simply provide a generator (or any iterator without a length) for your body::
+Requests unterstützt auch die paketierte Kodierung für die Übertragung (sog. *chunked encoding*)
+für ausgehende und ankommende Anfragen. Um eine Anfrage in Datenpakete zerteilt zu übertragen,
+geben Sie einfach einen Generator (oder einen Iterator ohne Länge) für die Daten an::
 
 
     def gen():
@@ -352,33 +371,38 @@ the specification in this case. If you require a different encoding, you can
 manually set the ``Response.encoding`` property, or use the raw
 ``Response.content``.
 
-HTTP Verbs
-----------
 
-Requests provides access to almost the full range of HTTP verbs: GET, OPTIONS,
-HEAD, POST, PUT, PATCH and DELETE. The following provides detailed examples of
-using these various verbs in Requests, using the GitHub API.
+HTTP Verben
+-----------
 
-We will begin with the verb most commonly used: GET. HTTP GET is an idempotent
-method that returns a resource from a given URL. As a result, it is the verb
-you ought to use when attempting to retrieve data from a web location. An
-example usage would be attempting to get information about a specific commit
-from GitHub. Suppose we wanted commit ``a050faf`` on Requests. We would get it
-like so::
+Requests erlaubt den Zugriff auf fast alle HTTP Verben: GET, OPTIONS, HEAD,
+POST, PUT, PATCH und DELETE. Der folgende Abschnitt bietet Ihnen detaillierte
+Beispiele, wie diese Verben in Requests benutzt werden. Als Beispiel dient
+uns die GitHub API.
+
+Wir beginnen mit dem am meisten verwendeten Verb: GET. HTTP GET ist eine
+idempotente Methode, die eine Ressource von einer angegebenen URL liest.
+Daher sollten Sie dieses Verb benutzen, wenn Sie Daten von einer URL im 
+Web lesen wollen. Ein Beispiel wäre der Versuch, Informationen über einen
+bestimmten Commit in GitHub zu erhalten. Nehmen wir an, wir wollten den
+Commit `à050faf`` aus dem Requests-Repository liesen. Dies erreichen
+Sie mit dem folgenden Code::
 
     >>> import requests
     >>> r = requests.get('https://api.github.com/repos/kennethreitz/requests/git/commits/a050faf084662f3a352dd1a941f2c7c9f886d4ad')
 
-We should confirm that GitHub responded correctly. If it has, we want to work
-out what type of content it is. Do this like so::
+Wir sollten sicherstellen, dass GitHub korrekt geantwortet hat. Falls dies
+der Fall ist, wollen wir herausfinden, wie der Inhalt der Antwort aussieht.
+Dies geht so::
+
 
     >>> if (r.status_code == requests.codes.ok):
     ...     print r.headers['content-type']
     ...
     application/json; charset=utf-8
 
-So, GitHub returns JSON. That's great, we can use the ``r.json`` method to
-parse it into Python objects.
+GitHub liefert also JSON. Das ist großartig, denn wir können die ``r.json`` Methode
+benutzen, um die Antwort in Python-Objekte zu zerlegen.
 
 ::
 
@@ -390,10 +414,10 @@ parse it into Python objects.
     >>> print commit_data[u'message']
     makin' history
 
-So far, so simple. Well, let's investigate the GitHub API a little bit. Now,
-we could look at the documentation, but we might have a little more fun if we
-use Requests instead. We can take advantage of the Requests OPTIONS verb to
-see what kinds of HTTP methods are supported on the url we just used.
+So weit, so einfach. Lassen Sie uns die GitHub API etwas genauer betrachten.
+Wir könnten dazu die Dokumentation lesen, aber es macht mehr Spaß, wenn wir 
+das stattdessen mit Requests tun. Wir können dazu das OPTIONS Verb benutzen,
+um zu sehen, welche HTTP Methoden von der gerade benutzten URL unterstützt werden.
 
 ::
 
@@ -401,25 +425,25 @@ see what kinds of HTTP methods are supported on the url we just used.
     >>> verbs.status_code
     500
 
-Uh, what? That's unhelpful! Turns out GitHub, like many API providers, don't
-actually implement the OPTIONS method. This is an annoying oversight, but it's
-OK, we can just use the boring documentation. If GitHub had correctly
-implemented OPTIONS, however, they should return the allowed methods in the
-headers, e.g.
-
-::
+He! Was? Das ist nicht hilfreich! Wie sich heraus stellt, implementiert GitHub,
+wie viele andere Dienste, die im WEB eine API anbieten, die OPTIONS-Methode nicht wirklich.
+Das ist etwas ärgerlich, denm jetzt müssen wir doch die langweilige Dokumentation lesen.
+Würde GitHub OPTIONS korrekt implementiert haben, dann könnte man mit diesem Verb
+alle erlaubten HTTP Methoden für die URL zurück erhalten, wie zum Beispiel so::
 
     >>> verbs = requests.options('http://a-good-website.com/api/cats')
     >>> print verbs.headers['allow']
     GET,HEAD,POST,OPTIONS
 
-Turning to the documentation, we see that the only other method allowed for
-commits is POST, which creates a new commit. As we're using the Requests repo,
-we should probably avoid making ham-handed POSTS to it. Instead, let's play
-with the Issues feature of GitHub.
+Nachdem wir die Dokumentation gelesen haben, sehen wir, dass die einzige andere
+Methode, die für Commits erlaubt wird, ein POST ist. Dies erzeugt einen neuen Commit.
+Da wir für unsere Beispiele bisher das Requests-Repository benutzt haben, wäre es
+vielleicht besser, nicht einfach wilde Änderungen per POST abzusenden. Lassen Sie
+und daher etwas mit dem Ticket-Feature von GitHub spielen.
 
-This documentation was added in response to Issue #482. Given that this issue
-already exists, we will use it as an example. Let's start by getting it.
+Diese Dokumentation wurde als Antwort auf Ticket #482 hinzugefügt. Da wir deshalb
+davon ausgehen können, dass es dieses Ticket gibt, werden wir es in den Beispielen
+benutzen. Starten wir damit, dass wir das Ticket lesen.
 
 ::
 
@@ -432,7 +456,7 @@ already exists, we will use it as an example. Let's start by getting it.
     >>> print issue[u'comments']
     3
 
-Cool, we have three comments. Let's take a look at the last of them.
+Cool, wir haben drei Kommentare zu Ticket #482. Sehen wir und den letzten an.
 
 ::
 
@@ -445,34 +469,33 @@ Cool, we have three comments. Let's take a look at the last of them.
     >>> print comments[2][u'body']
     Probably in the "advanced" section
 
-Well, that seems like a silly place. Let's post a comment telling the poster
-that he's silly. Who is the poster, anyway?
+Der Abschnitt "advanced"? Na dann schreiben wir doch einen Kommentar,
+dass wir uns gleich auf diese Aufgabe stürzen. Aber wer ist der Kerl überhaupt? ;-)
 
 ::
 
     >>> print comments[2][u'user'][u'login']
     kennethreitz
 
-OK, so let's tell this Kenneth guy that we think this example should go in the
-quickstart guide instead. According to the GitHub API doc, the way to do this
-is to POST to the thread. Let's do it.
+OK, sagen wir diesem Kenneth, dass wir los legen. Nach der Dokumentation der GitHub API können wir dies tun,
+indem wir mit einem POST einen Kommentar hinzufügen. Dann machen wir das auch.
 
 ::
 
-    >>> body = json.dumps({u"body": u"Sounds great! I'll get right on it!"})
+    >>> body = json.dumps({u"body": u"Klingt großartig! Ich mach mich gleich daran!"})
     >>> url = u"https://api.github.com/repos/kennethreitz/requests/issues/482/comments"
     >>> r = requests.post(url=url, data=body)
     >>> r.status_code
     404
 
-Huh, that's weird. We probably need to authenticate. That'll be a pain, right?
-Wrong. Requests makes it easy to use many forms of authentication, including
-the very common Basic Auth.
+Oha, das ist merkwürdig! Wahrscheinlich müssen wir und anmelden. Das wir bestimmt schwierig, nicht?
+Falsch. Requests macht es uns sehr einfach, verschiedene Formen der Authentifizierung zu
+benutzen, unter anderem die sehr verbreitete *Basic Authentication*.
 
 ::
 
     >>> from requests.auth import HTTPBasicAuth
-    >>> auth = HTTPBasicAuth('fake@example.com', 'not_a_real_password')
+    >>> auth = HTTPBasicAuth('fake@example.com', 'hier_wurde_das_passwort_stehen')
     >>> r = requests.post(url=url, data=body, auth=auth)
     >>> r.status_code
     201
@@ -480,25 +503,25 @@ the very common Basic Auth.
     >>> print content[u'body']
     Sounds great! I'll get right on it.
 
-Brilliant. Oh, wait, no! I meant to add that it would take me a while, because
-I had to go feed my cat. If only I could edit this comment! Happily, GitHub
-allows us to use another HTTP verb, PATCH, to edit this comment. Let's do
-that.
+Perfekt. Oh nein, doch nicht! Bevor wir die Dokumentation schreiben, muss zuerst die Katze
+gefüttert werden, das dauert eine Weile. Könnten wir doch nur den Kommentar bearbeiten!
+Glücklicherweise erlaubt uns die GitHub API ein anderes HTTP verb zu benutzen: PATCH.
+Verwenden wir also PATCH, um den Kommentar zu ändern.
 
 ::
 
     >>> print content[u"id"]
     5804413
-    >>> body = json.dumps({u"body": u"Sounds great! I'll get right on it once I feed my cat."})
+    >>> body = json.dumps({u"body": u"Klingt gut! Ich mache mich dran, sobald ich die Katze gefüttert habe!"})
     >>> url = u"https://api.github.com/repos/kennethreitz/requests/issues/comments/5804413"
     >>> r = requests.patch(url=url, data=body, auth=auth)
     >>> r.status_code
     200
 
-Excellent. Now, just to torture this Kenneth guy, I've decided to let him
-sweat and not tell him that I'm working on this. That means I want to delete
-this comment. GitHub lets us delete comments using the incredibly aptly named
-DELETE method. Let's get rid of it.
+Exzellent. Jetzt quälen wir diesen Kenneth etwas und bringen ihn ins Schwitzen, weil wir 
+ihm nicht sagen, dass wir an der Dokumentation arbeiten. Dazu löschen wir diesen Kommentar wieder.
+GitHub lässt und Kommentare durch das sehr passend benannte Verb DELETE löschen. Gut, werden
+wir den Kommentar los ...
 
 ::
 
@@ -508,10 +531,10 @@ DELETE method. Let's get rid of it.
     >>> r.headers['status']
     '204 No Content'
 
-Excellent. All gone. The last thing I want to know is how much of my ratelimit
-I've used. Let's find out. GitHub sends that information in the headers, so
-rather than download the whole page I'll send a HEAD request to get the
-headers.
+Nochmal exzellent. Alles weg. Alles, was ich jetzt noch möchte, ist eine Auskunft, 
+wie viel von meiner `Änderungsrate <http://developer.github.com/v3/#rate-limiting>`_ ich verbraucht habe. 
+Lassen Sie uns das heraus finden. GitHub sendet diese Informationen in einem header, daher werde
+ich, anstatt die komplette Seite zu laden, nur über das Verb HEAD die Header lesen.
 
 ::
 
@@ -522,22 +545,25 @@ headers.
     'x-ratelimit-limit': '5000'
     ...
 
-Excellent. Time to write a Python program that abuses the GitHub API in all
-kinds of exciting ways, 4995 more times.
+Sehr gut. Zeit, noch mehr Python Code zu schreiben, der die GitHub APU auf alle erdenklichen
+Arten missbraucht; und das noch 4995 mal in der nächsten Stunde.
 
-Link Headers
-------------
 
-Many HTTP APIs feature Link headers. They make APIs more self describing and discoverable.
+Link Header
+-----------
 
-GitHub uses these for `pagination <http://developer.github.com/v3/#pagination>`_ in their API, for example::
+Viele HTTP APIs benutzen sogenannte Links Header. Diese machen APIs leichter verstehbar und auch
+leichter zu erforschen.
+
+GitHub beispielsweise benutzt solche Link Header für die `Pagination <http://developer.github.com/v3/#pagination>`_, 
+(das seitenweise Blättern) in seiner API::
 
     >>> url = 'https://api.github.com/users/kennethreitz/repos?page=1&per_page=10'
     >>> r = requests.head(url=url)
     >>> r.headers['link']
     '<https://api.github.com/users/kennethreitz/repos?page=2&per_page=10>; rel="next", <https://api.github.com/users/kennethreitz/repos?page=6&per_page=10>; rel="last"'
 
-Requests will automatically parse these link headers and make them easily consumable::
+Requests analysiert diese Header automatisch und bietet sie in leicht erreichbarer Form an::
 
     >>> r.links["next"]
     {'url': 'https://api.github.com/users/kennethreitz/repos?page=2&per_page=10', 'rel': 'next'}
@@ -545,39 +571,37 @@ Requests will automatically parse these link headers and make them easily consum
     >>> r.links["last"]
     {'url': 'https://api.github.com/users/kennethreitz/repos?page=7&per_page=10', 'rel': 'last'}
 
-Transport Adapters
-------------------
+Transport-Adapter
+-----------------
 
-As of v1.0.0, Requests has moved to a modular internal design. Part of the
-reason this was done was to implement Transport Adapters, originally
-`described here`_. Transport Adapters provide a mechanism to define interaction
-methods for an HTTP service. In particular, they allow you to apply per-service
-configuration.
+Mit dem Erreichen der Version 1.0.0 wurde Requests auf ein modulares internes Design umgestellt.
+Mit ein Grund für diese Umstellung war die Implementierung von Transportadaptern, die ursprünglich
+`hier beschrieben`_ wurden. Transportadapter bieten einen Mechanismus zu Definition von Interaktionsmethoden
+für einen HTTP-basierten Dienst. Im speziellen erlauben sie die Konfiguration auf Dienstebasis.
 
-Requests ships with a single Transport Adapter, the
-:class:`HTTPAdapter <requests.adapters.HTTPAdapter>`. This adapter provides the
-default Requests interaction with HTTP and HTTPS using the powerful `urllib3`_
-library. Whenever a Requests :class:`Session <Session>` is initialized, one of
-these is attached to the :class:`Session <Session>` object for HTTP, and one
-for HTTPS.
+Requests wird mit einem einzelnen Transportadapter ausgeliefert, dem 
+:class:`HTTPAdapter <requests.adapters.HTTPAdapter>`. Dieser Adapter bietet die Standardinteraktion
+mit HTTP und HTTPs über die mächtige Bibliothek `urllib3`_. Immer dann, wenn eine
+Requests :class:`Session <Session>` initialisiert wird, wird eine davon an das :class:`Session <Session>` 
+Objekt für HTTP und eine für HTTPS gebunden.
 
-Requests enables users to create and use their own Transport Adapters that
-provide specific functionality. Once created, a Transport Adapter can be
-mounted to a Session object, along with an indication of which web services
-it should apply to.
+Requests ermöglicht es Benutzern, ihre eigenen Transportadapter zu erstellen und zu benutzen,
+die spezielle Funktionen bereit stellen. Einmal erzeugt, kann ein Transportadapter an ein
+Session-Objekt gebunden werden, zusammen mit der Informationen, bei welchen Webdiensten es angewendet
+werden soll.
 
 ::
 
     >>> s = requests.Session()
     >>> s.mount('http://www.github.com', MyAdapter())
 
-The mount call registers a specific instance of a Transport Adapter to a
-prefix. Once mounted, any HTTP request made using that session whose URL starts
-with the given prefix will use the given Transport Adapter.
+Der ``mount``-Aufruf registriert eine spezielle Instanz eines Transportadapters für einen
+Domänen-Prefix. Nachdem die Bindung erfolgt ist, wird jede HTTP-Anforderung einer Session,
+deren URL mit dem Domänen-Prefix beginnt, den angegebenen Transportadapter benutzen.
 
-Implementing a Transport Adapter is beyond the scope of this documentation, but
-a good start would be to subclass the ``requests.adapters.BaseAdapter`` class.
+Die Implementierung von Transportadaptern ist nicht Gegenstand dieser Dokumentation, aber
+ein guter Startpunkt wäre es, von der Klasse ``requests.adapters.BaseAdapter`` zu erben..
 
-.. _`described here`: http://kennethreitz.org/exposures/the-future-of-python-http
+.. _`hier beschrieben`: http://kennethreitz.org/exposures/the-future-of-python-http
 .. _`urllib3`: https://github.com/shazow/urllib3
 

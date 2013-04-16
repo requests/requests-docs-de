@@ -1,21 +1,20 @@
 .. _advanced:
 
-Advanced Usage
-==============
+Fortgeschrittene Nutzung
+========================
 
-This document covers some of Requests more advanced features.
+Dieses Dokument behandelt einige der fortgeschrittenen Features von Requests.
 
 
-Session Objects
----------------
+Sesssion-Objekte
+----------------
 
-The Session object allows you to persist certain parameters across
-requests. It also persists cookies across all requests made from the
-Session instance.
+Das Session-Objekt erlaubt das Persistieren einiger Parameter über einzelne Anfragen hinweg.
+Es persistiert auch Cookies für die Dauer aller Anfragen einer Session-Instanz.
 
-A session object has all the methods of the main Requests API.
+Ein Session-Objekt besitzt alle Methoden der Haupt-API von Requests (get,put, post, delete, head, options).
 
-Let's persist some cookies across requests::
+Lassen Sie und mit Cookies über mehrere Anfragen hinweg arbeiten::
 
     s = requests.Session()
 
@@ -26,39 +25,47 @@ Let's persist some cookies across requests::
     # '{"cookies": {"sessioncookie": "123456789"}}'
 
 
-Sessions can also be used to provide default data to the request methods. This
-is done by providing data to the properties on a session object::
+Sessions können auch dazu benutzt werden, um für die Methoden der Anfrage Standardwerte vorzuhalten.
+Dies geschieht durch die Angaben von Eigenschaften eines Session-Objekts::
 
     s = requests.Session()
     s.auth = ('user', 'pass')
     s.headers.update({'x-test': 'true'})
 
-    # both 'x-test' and 'x-test2' are sent
+    # sowohl 'x-test' als auch 'x-test2' werden als Header übermittelt
     s.get('http://httpbin.org/headers', headers={'x-test2': 'true'})
 
+Alle Dictionaries, die Sie einer Anfragemethode übergeben, werden mit den Werten 
+der Session zusammengeführt, bevor sie gesendet werden. 
+Falls an beiden Stellen Angaben gemacht werden, überschreiben die Parameter auf
+Methodenebene die des Session-Objekts.
 
-Any dictionaries that you pass to a request method will be merged with the session-level values that are set. The method-level parameters override session parameters.
+.. admonition:: Einen Wert aus einem Dictionary-Parameter entfernen
 
-.. admonition:: Remove a Value From a Dict Parameter
+    Unter Umständen möchten Sie einzelne Werte aus den Session-Daten nicht übermitteln.
+    Dies können Sie dadurch erreichen, dass Sie den Schlüssel im Dictionary beim Aufruf der 
+    Methode angeben, aber als Wert ``None``angeben. Dieser Schlüssel wird dann automatisch
+    ausgelassen.
 
-    Sometimes you'll want to omit session-level keys from a dict parameter. To do this, you simply set that key's value to ``None`` in the method-level parameter. It will automatically be omitted.
+Alle Werte, die innerhalb einer Session verwendet werden, stehen Ihnen direkt zur Verfügug.
+Sehen Sie dazu unter :ref:`Session API  <sessionapi>` nach, um mehr zu erfahren.
 
-All values that are contained within a session are directly available to you. See the :ref:`Session API Docs <sessionapi>` to learn more.
+Objekte für Anfrage und Antwort
+-------------------------------
 
-Request and Response Objects
-----------------------------
-
-Whenever a call is made to requests.*() you are doing two major things. First,
-you are constructing a ``Request`` object which will be sent of to a server
-to request or query some resource. Second, a ``Response`` object is generated
-once ``requests`` gets a response back from the server. The response object
-contains all of the information returned by the server and also contains the
-``Request`` object you created originally. Here is a simple request to get some
-very important information from Wikipedia's servers::
+Wann immer ein Aufruf von requests.*() erfolgt, passieren zwei Dinge.
+Zuerst erzeugen Sie damit ein ``Request`` Objekt, dass an einen Server
+geschickt wird, um eine Anfrage auszuführen oder eine Ressource zu lesen.
+Zweitens wird, sobald Requests eine Antwort vom Server erhält, ein
+``Response`` Objekt erzeugt. Dieses ``Response`` Objekt enthält alle vom
+Server gelieferten Informationen sowie das ursprünglich erzeugte ``Request`` Objekt.
+Hier ist eine einfaxche Anfrage, um einige sehr wichtige Daten aus der Wikipedia
+zu lesen::
 
     >>> r = requests.get('http://en.wikipedia.org/wiki/Monty_Python')
 
-If we want to access the headers the server sent back to us, we do this::
+Wenn Sie wissen wollen, welche Header der Server an uns zurück geschickt hat,
+tun Sie folgendes::
 
     >>> r.headers
     {'content-length': '56170', 'x-content-type-options': 'nosniff', 'x-cache':
@@ -70,12 +77,13 @@ If we want to access the headers the server sent back to us, we do this::
     'text/html; charset=UTF-8', 'x-cache-lookup': 'HIT from cp1006.eqiad.wmnet:3128,
     MISS from cp1010.eqiad.wmnet:80'}
 
-However, if we want to get the headers we sent the server, we simply access the
-request, and then the request's headers::
+Wollen Sie dagegen wissen, welche Header wir ursprünglich an den Server gesendet haben,
+greifen wir eindach auf die Anfrage und darin auf die Header von ``request`` zu::
 
     >>> r.request.headers
     {'Accept-Encoding': 'identity, deflate, compress, gzip',
     'Accept': '*/*', 'User-Agent': 'python-requests/1.2.0'}
+
 
 Prepared Requests
 -----------------

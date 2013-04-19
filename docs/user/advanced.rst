@@ -88,23 +88,25 @@ greifen wir eindach auf die Anfrage und darin auf die Header von ``request`` zu:
 Prepared Requests
 -----------------
 
-Whenever you receive a :class:`Response <requests.models.Response>` object
-from an API call or a Session call, the ``request`` attribute is actually the
-``PreparedRequest`` that was used. In some cases you may wish to do some extra
-work to the body or headers (or anything else really) before sending a
-request. The simple recipe for this is the following::
+Wann immer SIe ein :class:`Response <requests.models.Response>` Objekt von einem
+API-Aufruf oder einem Session-Aufruf zurück erhalten, handelt es sich bei der
+``request`` Eigenschaft tatsächlich um die ``PreparedRequest`` Eigenschaft, die
+benutzt wurde. In einigen Fällen möchten Sie vielleicht zusätzliche Bearbeitungen
+am Body oder den Headern (oder etwas anderem) vornehmen, bevor Sie die Anfrage absenden.
+Der einfache Weg dazu ist folgender::
 
     from requests import Request, Session
 
     s = Session()
-    prepped = Request('GET',  # or any other method, 'POST', 'PUT', etc.
+    prepped = Request('GET',  # oder irgendeine andere Methode, 'POST', 'PUT', etc.
                       url,
                       data=data
                       headers=headers
                       # ...
                       ).prepare()
-    # do something with prepped.body
-    # do something with prepped.headers
+    # führen Sie mit prepped.body eine Aktion durch
+    # oder
+    # führen Sie eine Aktion mit prepped.headers durch
     resp = s.send(prepped,
                   stream=stream,
                   verify=verify,
@@ -115,10 +117,10 @@ request. The simple recipe for this is the following::
                   )
     print(resp.status_code)
 
-Since you are not doing anything special with the ``Request`` object, you
-prepare it immediately and modified the ``PreparedRequest`` object. You then
-send that with the other parameters you would have sent to ``requests.*`` or
-``Sesssion.*``.
+Nachdem Sie nichts Besonderes mit dem ``Request`` Objekt gemacht haben, bereiten
+Sie das sofort durch den Aufruf von prepare() vor und veändern das ``PreparedRequest`` Objekt.
+Dieses senden Sie dann mit den anderen Parametern, die Sie auch an ``requests.*`` oder an
+``Session.*`` gesendet hätten.
 
 
 Überprüfen von SSL-Zertifikaten
@@ -225,84 +227,85 @@ geben Sie einfach einen Generator (oder einen Iterator ohne Länge) für die Dat
 Event Hooks
 -----------
 
-Requests has a hook system that you can use to manipulate portions of
-the request process, or signal event handling.
+Reqeusts hat ein System für Event Hooks, das Sie benutzen können, um sich in
+den Anfrageprozess einzuhängen oder Ereignisse zu signalisieren.
 
-Available hooks:
+Verfügbare Hooks:
 
 ``response``:
-    The response generated from a Request.
+    Die Antwort auf eine Anforderung.
 
-
-You can assign a hook function on a per-request basis by passing a
-``{hook_name: callback_function}`` dictionary to the ``hooks`` request
-parameter::
+Sie können eine Funktion für einen Hook auf Anfragebasis zuweisen, in dem Sie
+ein ``{hook_name: callback_function}`` Dictionary an den ``hooks`` Parameter
+übergeben::
 
     hooks=dict(response=print_url)
 
-That ``callback_function`` will receive a chunk of data as its first
-argument.
+Diese ``callback_function`` erhält ein Datenpaket als erstes Argument.
 
 ::
 
     def print_url(r):
         print(r.url)
 
-If an error occurs while executing your callback, a warning is given.
+Falls während der Ausführung des Callbacks ein Fehler passiert, erhalten Sie eine Warnung.
 
-If the callback function returns a value, it is assumed that it is to
-replace the data that was passed in. If the function doesn't return
-anything, nothing else is effected.
+Wenn die Callback-Funktion einen Wert zurück liefert, wird angenommen, dass dieser die
+Datenersetzen soll, die übergeben wurden. Wenn die Funktion nichts zurück liefert, wird
+auch nichts verändert.
 
-Let's print some request method arguments at runtime::
+Lassen Sie uns einige Argumente der Anfrage-Methode zur Laufzeit ausgeben::
 
     >>> requests.get('http://httpbin.org', hooks=dict(response=print_url))
     http://httpbin.org
     <Response [200]>
 
 
-Custom Authentication
----------------------
+Benutzerdefinierte Authentifizierung
+------------------------------------
 
-Requests allows you to use specify your own authentication mechanism.
+Reqeusts erlaubt es Ihnen, Ihren eigenen Authentifizierungsmechanismus anzugeben.
 
-Any callable which is passed as the ``auth`` argument to a request method will
-have the opportunity to modify the request before it is dispatched.
+Jedes Callable, das als das ``auth`` Argument einer Anfrage übergeben wird,
+hat die Möglichkeit, die Anfrage vor der Weiterleitung zu modifizieren.
 
-Authentication implementations are subclasses of ``requests.auth.AuthBase``,
-and are easy to define. Requests provides two common authentication scheme
-implementations in ``requests.auth``: ``HTTPBasicAuth`` and ``HTTPDigestAuth``.
+Implementierungen für eine Authentifizierung sind Unterklassen von ``requests.auth.AuthBase``
+und einfach zu definieren. Reqeusts bietet zwei Implementierungen üblicher Authentifizierungs-Schemata
+in ``requests.auth``: ``HTTPBasicAuth`` and ``HTTPDigestAuth``.
 
-Let's pretend that we have a web service that will only respond if the
-``X-Pizza`` header is set to a password value. Unlikely, but just go with it.
+Nehmen wir an, dass wir einen Webservice haben, der nur dann reagiert, wenn der ``X-Pizza`` Header
+auf einen Wert mit einer Kennung gesetzt wurde. Unwahrscheinlich, aber für das Beispiel nehmen 
+wir das einfach mal an.
 
 ::
 
     from requests.auth import AuthBase
 
     class PizzaAuth(AuthBase):
-        """Attaches HTTP Pizza Authentication to the given Request object."""
+        """Bindet HTTP Pizza Authentifizierung an das angegebene Anfrageobjekt."""
         def __init__(self, username):
-            # setup any auth-related data here
+            # hier erfolgt die vorbereitung für auth-relevante daten
             self.username = username
 
         def __call__(self, r):
-            # modify and return the request
+            # wir verändern die anfrage und liefern diese zurück
             r.headers['X-Pizza'] = self.username
             return r
 
-Then, we can make a request using our Pizza Auth::
+Jetzt können wir unsere Anfrage mit der Pizza-Authentifizierung durchführen::
 
     >>> requests.get('http://pizzabin.org/admin', auth=PizzaAuth('kenneth'))
     <Response [200]>
 
-Streaming Requests
-------------------
 
-With ``requests.Response.iter_lines()`` you can easily iterate over streaming
-APIs such as the `Twitter Streaming API <https://dev.twitter.com/docs/streaming-api>`_.
+Streaming mit Requests
+----------------------
 
-To use the Twitter Streaming API to track the keyword "requests"::
+Mit ``requests.Response.iter_lines()`` können Sie einfach über Streaming APIs wie z.B.
+die `Twitter Streaming API <https://dev.twitter.com/docs/streaming-api>`_ iterieren.
+
+Sagen wir der Twitter Streaming API, dass wir das Schlüsselwort "requests" verfolgen wollen::
+
 
     import requests
     import json
@@ -311,15 +314,15 @@ To use the Twitter Streaming API to track the keyword "requests"::
         data={'track': 'requests'}, auth=('username', 'password'), stream=True)
 
     for line in r.iter_lines():
-        if line: # filter out keep-alive new lines
+        if line: # keep-alive zeilen ausfiltern
             print json.loads(line)
 
 
 Proxies
 -------
 
-If you need to use a proxy, you can configure individual requests with the
-``proxies`` argument to any request method::
+Falls Sie einen Proxy benutzen müssen, können Sie individuelle Anfragen mit dem ``proxies`` 
+Argument ausstatten::
 
     import requests
 
@@ -330,7 +333,7 @@ If you need to use a proxy, you can configure individual requests with the
 
     requests.get("http://example.org", proxies=proxies)
 
-You can also configure proxies by environment variables ``HTTP_PROXY`` and ``HTTPS_PROXY``.
+Sie können Proxies auch über die Umgebungsvariablen ``HTTP_PROXY`` und ``HTTPS_PROXY`` konfigurieren.
 
 ::
 
@@ -340,37 +343,42 @@ You can also configure proxies by environment variables ``HTTP_PROXY`` and ``HTT
     >>> import requests
     >>> requests.get("http://example.org")
 
-To use HTTP Basic Auth with your proxy, use the `http://user:password@host/` syntax::
+Um HTTP Basic Auth mit ihrem Proxy zu benutzen, verwenden Sie die übliche 
+`http://user:password@host/` Syntax::
 
     proxies = {
         "http": "http://user:pass@10.10.1.10:3128/",
     }
 
-Compliance
-----------
 
-Requests is intended to be compliant with all relevant specifications and
-RFCs where that compliance will not cause difficulties for users. This
-attention to the specification can lead to some behaviour that may seem
-unusual to those not familiar with the relevant specification.
+Standardkonformität
+-------------------
 
-Encodings
-^^^^^^^^^
+Es ist die Absicht des Requests-Projektes, alle relevanten Spezifikationen und
+RFCs zu beachten, wo diese Konformität keine Schwierigkeiten für die Benutzer bedeutet.
+Dieser Fokus auf die Beachtung der Standards kann zu verhalten führen, dass für
+nicht mit diesen Standards und RFCs vertrauten Benutzern auf den ersten Blick
+ungewöhnlich aussieht.
 
-When you receive a response, Requests makes a guess at the encoding to use for
-decoding the response when you call the ``Response.text`` method. Requests
-will first check for an encoding in the HTTP header, and if none is present,
-will use `charade <http://pypi.python.org/pypi/charade>`_ to attempt to guess
-the encoding.
 
-The only time Requests will not do this is if no explicit charset is present
-in the HTTP headers **and** the ``Content-Type`` header contains ``text``. In
-this situation,
-`RFC 2616 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_
-specifies that the default charset must be ``ISO-8859-1``. Requests follows
-the specification in this case. If you require a different encoding, you can
-manually set the ``Response.encoding`` property, or use the raw
-``Response.content``.
+Zeichenkodierung
+^^^^^^^^^^^^^^^^
+
+Wenn Sie eine Antwort vom Server erhalten, versucht Requests das für die
+Dekodierung der Antwortdaten nötige Encoding zu erschließen, wenn Sie die
+``Response.text`` Methode aufrufen. Requests prüft zuerst, ob in den HTTP Headern
+eine Zeichenkodierung angegeben ist. Falls kein Encoding im Header vorhanden ist,
+benutzt Requests `charade <http://pypi.python.org/pypi/charade>`_ für einen
+Versuch, das Encoding zu erschließen.
+
+Der einzige Fall, bei dem Requests nicht versuchen wird, die Zeichenkodierung
+zu erraten, ist der, dass keine explizite Angabe des Encodings im Header vorhanden
+ist **und** dass der ``Content-Type`` Header den Inhalt ``text`` besitzt. In diesem
+Fall gibt der `RFC 2616 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7.1>`_
+an, dass der Standardzeichensatz ``ISO-8859-1`` sein muss. Requests folgt in diesem
+Fall der RFC-Spezifikation. Falls Sie ein anderes Encoding benötigen, können Sie
+manuell die Eigenschaft ``Response.encoding`` setzen. Alternativ können Sie auch
+den unverarbeiteten (raw) ``Response.content`` benutzen.
 
 
 HTTP Verben

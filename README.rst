@@ -25,7 +25,7 @@ So sollten die Dinge nicht laufen. Nicht in Python.
     >>> r.text
     ...
 
-Sehen sie sich den gleichen Code, `aber ohne Requests <https://gist.github.com/973705>`_ an.
+Sehen Sie sich den gleichen Code, `aber ohne Requests <https://gist.github.com/973705>`_ an.
 
 Requests erlaubt Ihnen das Versenden von HTTP/1.1-Anfragen. Sie können Header, Formulardaten,
 mehrteilige Dateien und Parameter über einfache Python-Dictionaries hinzufügen. Auf die gleiche

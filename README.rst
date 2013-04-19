@@ -1,4 +1,4 @@
-Requests: HTTP für Menschliche Wesen
+Requests: HTTP für menschliche Wesen
 ====================================
 
 

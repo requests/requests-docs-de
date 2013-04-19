@@ -120,6 +120,7 @@ prepare it immediately and modified the ``PreparedRequest`` object. You then
 send that with the other parameters you would have sent to ``requests.*`` or
 ``Sesssion.*``.
 
+
 Überprüfen von SSL-Zertifikaten
 -------------------------------
 
@@ -145,7 +146,7 @@ Requests kann auch die Überprüfung des SSL Zertifikates ignorieren, wenn Sie `
     >>> requests.get('https://kennethreitz.com', verify=False)
     <Response [200]>
 
-Als Standard steht ``verfiy``auf ``True`` und kann nur für Hostzertifikate verwendet werden.
+Als Standard steht ``verfiy`` auf ``True`` und kann nur für Hostzertifikate verwendet werden.
 
 You can also specify a local cert to use as client side certificate, as a single file (containing the private key and the certificate) or as a tuple of both file's path::
 

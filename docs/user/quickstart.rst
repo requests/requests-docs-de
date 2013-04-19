@@ -59,7 +59,7 @@ als Schlüssel/Wert-Paare nach einem Fragezeichen in der URL übergeben werden,
 z.B. ``httpbin.org/get?schluessel=wert``.
 Requests erlaubt es Ihnen, diese Daten in einem Dictionary zu übergeben, in dem
 Sie das ``params`` Schlüsselwortargument benutzen. Als Beispiel nehmen wir an,
-dass Sie ``schluessel1=wert1``und ``schluessel2=wert2`` an ``httpbin.org/get``
+dass Sie ``schluessel1=wert1`` und ``schluessel2=wert2`` an ``httpbin.org/get``
 übergeben wollen. Dazu benutzen Sie den folgenden Code:: 
 
     >>> payload = {'schluessel1': 'wert1', 'schluessel2': 'wert2'}
@@ -141,7 +141,7 @@ Rohdaten der Antwort
 --------------------
 
 Für den seltenen Fall, dass Sie auf die unverarbeiteten Daten des raw sockets
-der Antwort zugreifne wollen, können Sie ``r.raw`` bneutzen. Falls Sie das wollen,
+der Antwort zugreifen wollen, können Sie ``r.raw`` bneutzen. Falls Sie das wollen,
 stellen Sie sicher, dass Sie ``stream=True`` in Ihrer Anfrage setzen. Nachdem das
 erledigt ist, können Sie folgenden Code benutzen::
 

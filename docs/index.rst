@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Requests: HTTP for Menschliche Wesen
+Requests: HTTP für menschliche Wesen
 ====================================
 
 Release v\ |version|. (:ref:`Installation <install>`)
 
 Requests ist eine :ref:`Apache2 lizensierte <apache2>` HTTP Bibliothek,
-geschrieben in Python, für die Benutzung durch Menschen.
+geschrieben in Python, für die einfache Nutzung durch Menschen.
 
 
 Das **urllib2** Standard-Modul in Python bietet Ihnen die meisten HTTP-Funktionalitäten, die Sie

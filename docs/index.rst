@@ -59,8 +59,7 @@ in Ihren internen Anwendungen. Requests wurde mehr als 2 Millionen mal von PyPI 
 
 **Daniel Greenfeld**
     Ich habe eine 1200 Zeilen Bibliothek aus Spaghetticode überflüssig gemacht und durch 
-    10 Zeilen Code ersetzt, dank @kennethreitz's request Bibliothek. 
-    Heute war ein genialer Tag.
+    10 Zeilen Code ersetzt, dank @kennethreitz's request Bibliothek. Heute war ein genialer Tag.
 
 **Kenny Meyers**
     Python HTTP: Im Zweifel, ach was, auch ohne Zweifel, benutzen Sie Requests.

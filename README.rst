@@ -8,14 +8,14 @@ Requests: HTTP für menschliche Wesen
 Requests ist eine Apache2 lizensierte HTTP Bibliothek, geschrieben in Python, für menschliche Wesen.
 
 Die meisten existierenden Python-Module zum Senden von HTTP-Anfragen sind extrem
-ausführlich und mühsam zu benutzen. Pythons integriertes Modul urllib2 bietet die
-meisten Funktionen, die Sie benötigen sollten, aber die API ist definitiv kaputt.
+detailorientiert und mühsam zu benutzen. Pythons integriertes Modul urllib2 bietet die
+meisten Funktionen, die Sie wahrscheinlich benötigen, aber die API ist definitiv kaputt.
 Sie erfordert eine Unmenge von Arbeit (einschließlich des Überschreibens von Methoden),
 um die einfachsten Dinge zu erledigen.
 
 So sollten die Dinge nicht laufen. Nicht in Python.
 
-.. code-block:: pycon
+.. code-block:: 
 
     >>> r = requests.get('https://api.github.com', auth=('user', 'pass'))
     >>> r.status_code

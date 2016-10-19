@@ -118,8 +118,8 @@ Um zum Beispiel ein Bild aus den von einer Anfrage gelieferten Binärdaten zu er
 können Sie den folgenden Code benutzen::
 
     >>> from PIL import Image
-    >>> from StringIO import StringIO
-    >>> i = Image.open(StringIO(r.content))
+    >>> from io import BytesIO
+    >>> i = Image.open(BytesIO(r.content))
 
 
 JSON-basierte Antwortdaten
